@@ -1,0 +1,7 @@
+# R/datastore.R
+importFrom("data.table", "data.table")
+export(twstats_register_source)
+export(twstats_find_tables)
+export(twstats_get_table)
+
+export(twstats_register_source)

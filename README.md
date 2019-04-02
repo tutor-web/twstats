@@ -16,8 +16,8 @@ apt install \
 
 ```
 twstats_tables <- twstats_find_tables(
-    columns = c('year', 'country', 'value'),
-    rowcount = 10)
+    required_columns = 'year/country/value',
+    required_rowcount = 10)
 ```
 
 ...will search for any tables with year / country / value columns, and have
@@ -50,7 +50,7 @@ To update a question, you need to preserve the order of existing tables in ``tws
 Provide the existing list with ``previous_tables``, which will filter then from the result:
 
 ```
-twstats_find_tables(c('year', 'country', 'value'), rowcount = 10,
+twstats_find_tables('year/country/value', required_rowcount = 10,
     previous_tables = twstats_tables)
 ```
 
@@ -59,17 +59,17 @@ twstats_find_tables(c('year', 'country', 'value'), rowcount = 10,
 Find tables that match a pattern.
 
 ```
-twstats_find_tables(columns, rowcount = NULL, previous_tables = c())
+twstats_find_tables(required_columns, required_rowcount = NULL, previous_tables = c())
 ```
 
-* columns: A vector of column types the table should have, possible types are:
+* required_columns: A glob of '/' separated column types the table should have, possible types are:
   * year: Year of data, e.g. ``2007``
   * country: Country-code, e.g. ``AT``, ``CZ``.
   * value: A numeric value
   * perc: A percentage value
-* rowcount: An approximate power-of-10 count of rows the table should have. For example, for the same dataset:
-  * ``rowcount = 10`` could return data for one or two countries at random.
-  * ``rowcount = 100`` could return data for all countries in the dataset.
+* required_rowcount: An approximate power-of-10 count of rows the table should have. For example, for the same dataset:
+  * ``10`` could return data for one or two countries at random.
+  * ``100`` could return data for all countries in the dataset.
 * previous_tables: If supplied, filter these tables from the output
 
 Returns a vector of table IDs, e.g. ``c('eurostat/tin00073/2015', 'eurostat/tin00073/2016')``.
@@ -110,9 +110,9 @@ Sources can be regstered with the following:
 
 ```
 twstats_register_source('eurostat/tin00073/2015',
-    columns = c('year', 'country', 'value'),
-    rows = 100,
-    data = function (permutation) {
+    columns = 'year/country/value',
+    rowcount = 100,
+    data = {
         d <- get_eurostat('tin00073')
         list(
             title = ...
