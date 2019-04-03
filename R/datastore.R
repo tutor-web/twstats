@@ -1,8 +1,5 @@
-library(data.table)
-
-
 # Internal data.table holding all registrations
-twstats_table <- data.table(
+twtables <- data.table(
     name = character(),
     title = character(),
     unit = character(),
@@ -11,10 +8,26 @@ twstats_table <- data.table(
     data = list())
 
 
-# Add a new source to the data.table
-twstats_register_source <- function (name, title, columns, unit, rowcount, data) {
+# Create a twstats table
+twstats_table <- function (name, title, columns, unit, rowcount, data) {
     # Turn expression into a function that returns that expression
-    to_function <- function (x) { as.function(alist(x)) }
+    to_function <- function (x) {
+        return(x)  # TODO: Do we really need it?
+        # Check whether x is a function, without parsing x
+        str(deparse(alist(x)[[1]])[[1]])
+        if (grepl("^function", deparse(alist(x)[[1]])[[1]])) {
+            return(x)
+        } else {
+            as.function(alist(x))
+        }
+    }
+
+    check_function <- function (x) {
+        if (!is.function(x)) {
+            stop(deparse(match.call()[[2]]), " is not a function")
+        }
+        return(x)
+    }
 
     check_scalar <- function (x) {
         if (length(x) != 1) {
@@ -24,18 +37,41 @@ twstats_register_source <- function (name, title, columns, unit, rowcount, data)
     }
     # TODO: Check format of columns?
 
-    # Combine new source with existing source table
-    extra_rows <- data.table(
+    # TODO: Give it a class?
+    return(list(
         # NB: These have to match the order of the existing table
         name = check_scalar(name),
         title = check_scalar(title),
         unit = check_scalar(unit),
-        rowcount = check_scalar(rowcount),
+        rowcount = as.numeric(check_scalar(rowcount)),
         columns = check_scalar(columns),
-        data = to_function(data))
-    twstats_table <<- rbindlist(list(twstats_table, extra_rows))
+        data = check_function(data)))
+}
+
+# Add a new table(s) to the data.table
+twstats_register_table <- function (new_table) {
+    # NB: Since vector of functions aren't a thing, needs to be a list
+    new_table$data <- list(new_table$data)
+
+    # Combine new table with existing table table
+    twtables <<- rbind(
+        twtables,
+        new_table)
 
     return(invisible(NULL))
+}
+
+
+# Fetch table object for a table
+twstats_get_table <- function (required_name) {
+    rv <- as.list(twtables[name == required_name])
+
+    if (length(rv$data) != 1) {
+        stop("Searching for ", required_name, " found ", length(rv$data), " tables")
+    }
+    rv$data <- rv$data[[1]]
+
+    return(rv)
 }
 
 
@@ -60,23 +96,11 @@ twstats_find_tables <- function (required_columns = NULL, required_rowcount = NU
 
     # TODO: glob2rx doesn't respect path slashes
     if (!is.null(required_columns)) {
-        add_condition(call("%like%", as.symbol('columns'), glob2rx(required_columns)))
+        add_condition(quote(data.table::like(columns, glob2rx(required_columns))))
     }
 
     if (length(previous_tables) > 0) {
         add_condition(call("%in%", as.symbol('name'), previous_tables), negate = TRUE)
     }
-    
-    return(twstats_table[eval(cond)])
-}
-
-# Fetch data for a table
-twstats_get_table <- function (required_name) {
-    # TODO: What if <> 1 results?
-    rv <- as.list(twstats_table[name == required_name])
-
-    # Call data function, replace with results
-    rv$data <- rv[['data']][[1]]()
-
-    return(rv)
+    return(twtables[eval(cond)])
 }
