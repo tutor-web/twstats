@@ -1,6 +1,4 @@
 # R/datastore.R
 importFrom("data.table", "data.table")
-export(twstats_table)
-export(twstats_register_table)
 export(twstats_get_table)
 export(twstats_find_tables)
