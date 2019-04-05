@@ -2,7 +2,13 @@
 
 ## Prerequisites
 
-To install eurostat:
+Any dependencies of twstats will be installed as you install the package,
+however the data packages it understands will not be installed automatically.
+
+### Eurostat
+
+Eurostat requires nlme, which isn't available on CRAN for the version of R in Debian stable.
+Make sure you use the debian package instead:
 
 ```
 apt install \

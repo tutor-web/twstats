@@ -14,5 +14,6 @@ Depends:
 Imports:
     data.table (>= 1.12.0)
 Suggests: 
+    eurostat
 BugReports: https://github.com/tutor-web/twstats/issues
 LazyData: yes
