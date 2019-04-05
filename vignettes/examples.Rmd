@@ -1,0 +1,43 @@
+---
+title: "Examples of using twstats"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Getting started}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+# Basic example of using twstats
+
+First, load the library:
+
+```{r}
+library(twstats)
+```
+
+First, find tables you are interested in. Generally you do this by specifying the columns:
+
+```{r}
+twstats_find_tables('year/country/value')
+```
+
+...you can also use wildcards if you don't care what sort of column it is:
+
+```{r}
+twstats_find_tables('*/value')
+```
+
+Given a table name, you can get more detail:
+
+```{r}
+twstats_get_table('eurostat/tin00073/IS')
+```
+
+Finally, we can get the data itself by calling it's data function:
+
+```{r, message=FALSE}
+twstats_get_table('eurostat/tin00073/IS')$data()
+```
