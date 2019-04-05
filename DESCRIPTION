@@ -1,7 +1,7 @@
 Encoding: UTF-8
 Package: twstats
 Type: Package
-Title: Fetch random table data for use in questions / examples
+Title: Fetch Random Table Data for Use in Questions / Examples
 Version: 1.0-0
 Date: 2019-04-01
 Authors@R:
