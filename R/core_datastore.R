@@ -62,5 +62,5 @@ twstats_find_tables <- function (required_columns = NULL, required_rowcount = NU
     if (length(previous_tables) > 0) {
         add_condition(call("%in%", as.symbol('name'), previous_tables), negate = TRUE)
     }
-    return(twtables[eval(cond)])
+    return(twtables[eval(cond)]$name)
 }
