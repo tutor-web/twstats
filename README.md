@@ -32,50 +32,6 @@ install.packages('cbsodataR')
 
 See https://cran.r-project.org/web/packages/cbsodataR/vignettes/cbsodataR.html for more information.
 
-## Quickstart: Building a question
-
-1. Use ``twstats_find_tables`` to search for tables you can use:
-
-```
-twstats_tables <- twstats_find_tables(
-    required_columns = 'year/country/value',
-    required_rowcount = 10)
-```
-
-...will search for any tables with year / country / value columns, and have
-approximately 10s of rows in it.
-
-2. Hard-code that list to the question code. Set ``TW:PERMUTATIONS`` to the length of
-this list:
-
-```
-# TW:PERMUTATIONS=3
-
-twstats_tables <- c(
-    'eurostat/tin00073/2015',
-    'eurostat/tin00073/2016',
-    . . .)
-```
-
-3. Fetch table according to the permutation
-
-```
-question <- function(permutation, data_frames) {
-    t <- twstats_get_table(twstats_tables[[permutation]])
-    . . .
-}
-```
-
-## Quickstart: Updating a question with new data
-
-To update a question, you need to preserve the order of existing tables in ``twstats_tables`` to ensure questions don't change.
-Provide the existing list with ``previous_tables``, which will filter then from the result:
-
-```
-twstats_find_tables('year/country/value', required_rowcount = 10,
-    previous_tables = twstats_tables)
-```
-
 ## Methods: twstats_find_tables
 
 Find tables that match a pattern.

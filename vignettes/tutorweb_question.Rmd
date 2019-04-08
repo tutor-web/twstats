@@ -1,0 +1,82 @@
+---
+title: "Using twstats in a tutorweb question"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Using twstats in a tutorweb question}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+# Using twstats in a tutorweb question
+
+```{r, echo=FALSE}
+library(twstats)
+
+write_question <- function (qtext = qtext, qtable = d, choices = choices, choicescorrect = choices_correct) {
+    paste0(qtext, "\n\n",
+        paste0("[ ] ", choices, collapse = "\n"))
+}
+```
+First, use ``twstats_find_tables`` to search for tables you can use:
+
+The following will search for any tables with year & value columns, and have
+roughly 10 rows in it.
+
+```{r}
+qn_tables <- twstats_find_tables('year/value', required_rowcount = 10)
+head(qn_tables)
+```
+
+Take this list and hard-code into the question code. Set ``TW:PERMUTATIONS`` to the length of
+this list. The resulting question code should look something like this:
+
+```{r}
+# TW:PERMUTATIONS=3
+
+qn_tables <- c(
+    'eurostat/tin00073/BE',
+    'eurostat/tin00073/BG',
+    'cbso/82610ENG/total')
+
+question <- function(permutation, data_frames) {
+    tbl <- twstats_get_table(qn_tables[[permutation]])
+    d <- tbl$data()
+    
+    qtext = paste0(
+        'The table below shows ', tbl$title, '.\n',
+        'Find the difference of ', tbl$unit, ' between ', min(d$year), ' and ', max(d$year),"\n\n",
+        paste(capture.output(print.data.frame(head(d))), collapse = "\n"))
+    choices = c(
+        d[d$year == max(d$year), 'value'] - d[d$year == min(d$year), 'value'],
+        d[d$year == max(d$year), 'value'] - d[d$year == min(d$year), 'value'] - 10,
+        (d[d$year == max(d$year), 'value'] - d[d$year == min(d$year), 'value']) / 10)
+    choicescorrect = c(TRUE, FALSE, FALSE)
+
+    write_question(qtext = qtext, choices = choices, choicescorrect = choices_correct);
+}
+```
+
+This means that the output for each perumutation will be stable, e.g:
+
+```{r, message=FALSE}
+cat(question(1))
+```
+
+```{r, message=FALSE}
+cat(question(3))
+```
+
+## Updating a question with new data
+
+To update a question, you need to preserve the order of existing tables in ``twstats_tables`` to ensure questions don't change.
+Provide the existing list with ``previous_tables``, which will filter then from the result:
+
+```{r}
+twstats_find_tables('year/value', required_rowcount = 10,
+    previous_tables = qn_tables)
+```
+
+Then add these tables to ``qn_tables`` in the question code, and increase ``TW:PERMUTATIONS`` accordingly.
