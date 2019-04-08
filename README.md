@@ -22,6 +22,16 @@ Finally, install the package:
 install.packages('eurostat')
 ```
 
+### cbsodataR
+
+Install the package:
+
+```
+install.packages('cbsodataR')
+```
+
+See https://cran.r-project.org/web/packages/cbsodataR/vignettes/cbsodataR.html for more information.
+
 ## Quickstart: Building a question
 
 1. Use ``twstats_find_tables`` to search for tables you can use:
