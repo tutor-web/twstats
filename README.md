@@ -16,6 +16,12 @@ apt install \
     r-cran-nlme # Newer NLME requires R 3.4, not in Debian stretch
 ```
 
+Finally, install the package:
+
+```
+install.packages('eurostat')
+```
+
 ## Quickstart: Building a question
 
 1. Use ``twstats_find_tables`` to search for tables you can use:
