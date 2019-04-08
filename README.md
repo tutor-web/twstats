@@ -32,6 +32,14 @@ install.packages('cbsodataR')
 
 See https://cran.r-project.org/web/packages/cbsodataR/vignettes/cbsodataR.html for more information.
 
+## Installation
+
+You can install using devtools:
+
+```
+devtools::install_github('tutor-web/twstats')
+```
+
 ## Methods: twstats_find_tables
 
 Find tables that match a pattern.
