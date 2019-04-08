@@ -46,4 +46,3 @@ twstats_register_eurostat <- function () {
     twstats_register_table(tin00073)
     register_all_countries(tin00073, 10)
 }
-twstats_register_eurostat()
