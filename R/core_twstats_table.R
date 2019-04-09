@@ -1,5 +1,5 @@
 # Create a twstats table
-twstats_table <- function (name, title, columns, unit, rowcount, data) {
+twstats_table <- function (name, title, columns, rowcount, data) {
     # Turn expression into a function that returns that expression
     to_function <- function (x) {
         return(x)  # TODO: Do we really need it?
@@ -32,7 +32,6 @@ twstats_table <- function (name, title, columns, unit, rowcount, data) {
         # NB: These have to match the order of the existing table
         name = check_scalar(name),
         title = check_scalar(title),
-        unit = check_scalar(unit),
         rowcount = as.numeric(check_scalar(rowcount)),
         columns = check_scalar(columns),
         data = check_function(data)))

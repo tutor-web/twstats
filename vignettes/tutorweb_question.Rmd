@@ -47,12 +47,12 @@ question <- function(permutation, data_frames) {
     
     qtext = paste0(
         'The table below shows ', tbl$title, '.\n',
-        'Find the difference of ', tbl$unit, ' between ', min(d$year), ' and ', max(d$year),"\n\n",
+        'Find the difference of ', colnames(d)[[2]], ' between ', min(d$year), ' and ', max(d$year),"\n\n",
         paste(capture.output(print.data.frame(head(d))), collapse = "\n"))
     choices = c(
-        d[d$year == max(d$year), 'value'] - d[d$year == min(d$year), 'value'],
-        d[d$year == max(d$year), 'value'] - d[d$year == min(d$year), 'value'] - 10,
-        (d[d$year == max(d$year), 'value'] - d[d$year == min(d$year), 'value']) / 10)
+        d[d$year == max(d$year), 2] - d[d$year == min(d$year), 2],
+        d[d$year == max(d$year), 2] - d[d$year == min(d$year), 2] - 10,
+        (d[d$year == max(d$year), 2] - d[d$year == min(d$year), 2]) / 10)
     choicescorrect = c(TRUE, FALSE, FALSE)
 
     write_question(qtext = qtext, choices = choices, choicescorrect = choices_correct);

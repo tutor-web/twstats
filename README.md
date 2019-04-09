@@ -77,7 +77,6 @@ For example, ``twstats_get_table('eurostat/tin00073/2007')`` would return:
 ```
 list(
     title = "Households with broadband access",
-    unit = "Households",
     source = '<a href="http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=tin00073&lang=en">Eurostat</a>',
     data = data.frame(
         year = c('2007', ...),

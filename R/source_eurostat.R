@@ -17,7 +17,6 @@ register_all_countries <- function (tbl, sub_rowcount) {
             columns = gsub('(^|/)country', '', tbl$columns),
             rowcount = sub_rowcount,
             title = paste0(tbl$title, ' in ', twstat_countries[code == sel_country]$name),
-            unit = tbl$unit,
             data = filter_data_fn(sel_country))
         twstats_register_table(s)
     }
@@ -36,11 +35,10 @@ twstats_register_eurostat <- function () {
         columns = 'year/country/value',
         rowcount = 100,
         title = "Households with broadband access",
-        unit = "Households",
         data = function () {
             d <- data.table::as.data.table(eurostat::get_eurostat('tin00073'))[geo %in% twstat_countries$code, c('time', 'geo', 'values')]
             d[, time := as.numeric(gsub('\\-.*', '', time))]
-            data.table::setnames(d, c('year', 'country', 'value'))
+            data.table::setnames(d, c('year', 'country', "Households"))
             return(data.table(d))  # TODO: Why does this stop being a data.table?
         })
     twstats_register_table(tin00073)

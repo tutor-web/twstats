@@ -13,27 +13,25 @@ twstats_register_cbsodatar <- function () {
         columns = 'year/value',
         rowcount = 10,
         title = "Total renewable energy production in the Netherlands",
-        unit = "million kWh",
         data = function () {
             d <- cached_cbs_get_data('82610ENG', EnergySourcesTechniques = c("T001028 "))
             d <- cbsodataR::cbs_add_label_columns(d, 'Periods')
 
             data.table(
                 year = as.numeric(as.character(d$Periods_label)),
-                value = d$GrossProductionOfElectricity_2)
+                "million kWh" = d$GrossProductionOfElectricity_2)
         }))
 
     twstats_register_table(twstats_table('cbso/82610ENG/perc',
         columns = 'year/perc',
         rowcount = 10,
         title = "Percentage renewable energy production in the Netherlands",
-        unit = "percentage",
         data = function () {
             d <- cached_cbs_get_data('82610ENG', EnergySourcesTechniques = c("T001028 "))
             d <- cbsodataR::cbs_add_label_columns(d, 'Periods')
 
             data.table(
                 year = as.numeric(as.character(d$Periods_label)),
-                perc = d$GrossProductionOfElectricity_5)
+                percentage = d$GrossProductionOfElectricity_5)
         }))
 }

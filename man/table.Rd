@@ -7,7 +7,7 @@
 }
 
 \usage{
-    twstats_table(name, title, columns, unit, rowcount, data)
+    twstats_table(name, title, columns, rowcount, data)
 }
 
 \arguments{
@@ -24,12 +24,9 @@
         \enumerate{
             \item \bold{year} A column of years, e.g. \code{2008}.
             \item \bold{country} A column of country codes, e.g. \code{IS}, \code{UK}.
-            \item \bold{value} An arbitary numeric value.
+            \item \bold{value} An arbitary numeric value. The data will have a more descriptive name, e.g. "Households".
             \item \bold{perc} A percentage.
         }
-    }
-    \item{unit}{
-        A string describing the unit in the 'value' column, e.g. \code{'households'}.
     }
     \item{rowcount}{
         Approximate power-of-ten rows the returned tables should have, e.g. \code{10}, \code{100}, \code{1000}.
