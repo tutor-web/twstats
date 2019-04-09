@@ -49,13 +49,19 @@ twstats_find_tables <- function (required_columns = NULL, required_rowcount = NU
         }
     }
 
+    colglob_regexp <- function (p) {
+        p <- paste0("^", p, "$")
+        p <- gsub("\\.", "\\\\.", p)
+        p <- gsub("\\*", "[^/]*", p)
+        return(p)
+    }
+
     if (!is.null(required_rowcount)) {
         add_condition(call("==", as.symbol('rowcount'), required_rowcount))
     }
 
-    # TODO: glob2rx doesn't respect path slashes
     if (!is.null(required_columns)) {
-        add_condition(quote(data.table::like(columns, glob2rx(required_columns))))
+        add_condition(quote(data.table::like(columns, colglob_regexp(required_columns))))
     }
 
     if (length(previous_tables) > 0) {
