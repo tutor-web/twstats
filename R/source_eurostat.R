@@ -23,7 +23,7 @@ register_all_countries <- function (tbl, sub_rowcount) {
 }
 
 twstats_register_eurostat <- function () {
-    if (!require(eurostat)) {
+    if (!requireNamespace('eurostat', quietly = TRUE)) {
         warning("eurostat package not available, not registering eurostat tables")
         return()
     }

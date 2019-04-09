@@ -1,5 +1,5 @@
 twstats_register_cbsodatar <- function () {
-    if (!require(cbsodataR)) {
+    if (!requireNamespace('cbsodataR', quietly = TRUE)) {
         warning("cbsodataR package not available, not registering cbsodataR tables")
         return()
     }
