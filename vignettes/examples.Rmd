@@ -27,7 +27,7 @@ twstats_find_tables('year/country/value')
 ...you can also use wildcards if you don't care what sort of column it is:
 
 ```{r}
-twstats_find_tables('*/value')
+head(twstats_find_tables('*/value'))
 ```
 
 Given a table name, you can get more detail:
@@ -40,4 +40,13 @@ Finally, we can get the data itself by calling it's data function:
 
 ```{r, message=FALSE}
 twstats_get_table('eurostat/tin00073/IS')$data()
+```
+
+The value column specifies any continuous numeric value.
+It's actual name in the data tells you what the values represent.
+In addition to the above, there are tables with multiple value columns, for comparison questions. For example:
+
+```{r, message=FALSE}
+twstats_get_table('eurostat/tin00073/DE-FR')$title
+twstats_get_table('eurostat/tin00073/DE-FR')$data()
 ```
