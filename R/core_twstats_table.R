@@ -13,7 +13,6 @@ twstats_table <- function (name, title, source, columns, rowcount, data) {
         }
         return(x)
     }
-    # TODO: Check format of columns?
 
     # TODO: Give it a class?
     return(list(
