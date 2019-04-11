@@ -1,17 +1,5 @@
 # Create a twstats table
 twstats_table <- function (name, title, columns, rowcount, data) {
-    # Turn expression into a function that returns that expression
-    to_function <- function (x) {
-        return(x)  # TODO: Do we really need it?
-        # Check whether x is a function, without parsing x
-        str(deparse(alist(x)[[1]])[[1]])
-        if (grepl("^function", deparse(alist(x)[[1]])[[1]])) {
-            return(x)
-        } else {
-            as.function(alist(x))
-        }
-    }
-
     check_function <- function (x) {
         if (!is.function(x)) {
             stop(deparse(match.call()[[2]]), " is not a function")
