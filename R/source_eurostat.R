@@ -17,6 +17,7 @@ register_all_countries <- function (tbl, sub_rowcount) {
             columns = gsub('(^|/)country', '', tbl$columns),
             rowcount = sub_rowcount,
             title = paste0(tbl$title, ' in ', twstat_countries[code == sel_country]$name),
+            source = tbl$source,
             data = filter_data_fn(sel_country))
         twstats_register_table(s)
     }
@@ -48,6 +49,7 @@ register_country_comparisons <- function (tbl, sub_rowcount) {
             columns = gsub('(^|/)country(/|$)', '\\1value\\2', tbl$columns),
             rowcount = sub_rowcount,
             title = paste0(tbl$title, ' in ', paste0(sel_countries, collapse = " vs ")),
+            source = tbl$source,
             data = filter_data_fn(sel_countries))
         twstats_register_table(s)
     }
@@ -59,6 +61,10 @@ twstats_register_eurostat <- function () {
         return()
     }
 
+    source_html <- function (id) {
+        paste0('<a href="http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=', id, '&lang=en">Eurostat</a>')
+    }
+
     # Country codes we are interested in
     twstat_countries <- data.table(rbind(eurostat::eu_countries, eurostat::efta_countries))
 
@@ -66,6 +72,7 @@ twstats_register_eurostat <- function () {
         columns = 'year/country/value',
         rowcount = 100,
         title = "Households with broadband access",
+        source = source_html('tin00073'),
         data = function () {
             d <- data.table::as.data.table(eurostat::get_eurostat('tin00073'))[geo %in% twstat_countries$code, c('time', 'geo', 'values')]
             d[, time := as.numeric(gsub('\\-.*', '', time))]

@@ -1,5 +1,5 @@
 # Create a twstats table
-twstats_table <- function (name, title, columns, rowcount, data) {
+twstats_table <- function (name, title, source, columns, rowcount, data) {
     check_function <- function (x) {
         if (!is.function(x)) {
             stop(deparse(match.call()[[2]]), " is not a function")
@@ -20,6 +20,7 @@ twstats_table <- function (name, title, columns, rowcount, data) {
         # NB: These have to match the order of the existing table
         name = check_scalar(name),
         title = check_scalar(title),
+        source = check_scalar(source),
         rowcount = as.numeric(check_scalar(rowcount)),
         columns = check_scalar(columns),
         data = check_function(data)))

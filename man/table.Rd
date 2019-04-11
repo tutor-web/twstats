@@ -7,7 +7,7 @@
 }
 
 \usage{
-    twstats_table(name, title, columns, rowcount, data)
+    twstats_table(name, title, source, columns, rowcount, data)
 }
 
 \arguments{
@@ -16,6 +16,9 @@
     }
     \item{title}{
         A string title for the table
+    }
+    \item{source}{
+        HTML-formatted string describing the source (usually with a link).
     }
     \item{columns}{
         A slash-separated string describing the columns in the table, e.g. \code{'year/country/value'}.

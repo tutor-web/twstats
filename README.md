@@ -78,16 +78,15 @@ For example, ``twstats_get_table('eurostat/tin00073/2007')`` would return:
 list(
     title = "Households with broadband access",
     source = '<a href="http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=tin00073&lang=en">Eurostat</a>',
-    data = data.frame(
+    data = function() { data.frame(
         year = c('2007', ...),
         country = c('AT', ...),
-        value = c(22, ...)))
+        value = c(22, ...))) }
 ```
 
 ### TODO:
 
 * Do we need to have another function to, e.g. select the tables from the list that are from a particular year or country, so a student could choose a country (or countries) of interest?
-* ``source`` should be HTML to embed the link into the page.
 
 ## Adding sources to twstats
 

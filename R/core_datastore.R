@@ -2,8 +2,9 @@
 twtables <- data.table(  # NB: Has to have same columns/order as a twstats_table
     name = character(),
     title = character(),
-    rowcount = numeric(),
+    source = character(),
     columns = character(),
+    rowcount = numeric(),
     data = list())
 
 
