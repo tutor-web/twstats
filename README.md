@@ -83,19 +83,3 @@ list(
         country = c('AT', ...),
         value = c(22, ...))) }
 ```
-
-## Adding sources to twstats
-
-Sources can be regstered with the following:
-
-```
-twstats_register_table(twstats_table('eurostat/tin00073/2015',
-    columns = 'year/country/value',
-    rowcount = 100,
-    data = {
-        d <- get_eurostat('tin00073')
-        list(
-            title = ...
-            data = d)
-    }))
-```
