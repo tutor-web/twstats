@@ -84,10 +84,6 @@ list(
         value = c(22, ...))) }
 ```
 
-### TODO:
-
-* Do we need to have another function to, e.g. select the tables from the list that are from a particular year or country, so a student could choose a country (or countries) of interest?
-
 ## Adding sources to twstats
 
 Sources can be regstered with the following:
