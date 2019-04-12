@@ -40,46 +40,17 @@ You can install using devtools:
 devtools::install_github('tutor-web/twstats')
 ```
 
-## Methods: twstats_find_tables
+## Usage
 
-Find tables that match a pattern.
-
-```
-twstats_find_tables(required_columns, required_rowcount = NULL, previous_tables = c())
-```
-
-* required_columns: A glob of '/' separated column types the table should have, possible types are:
-  * year: Year of data, e.g. ``2007``
-  * country: Country-code, e.g. ``AT``, ``CZ``.
-  * value: A numeric value
-  * perc: A percentage value
-* required_rowcount: An approximate power-of-10 count of rows the table should have. For example, for the same dataset:
-  * ``10`` could return data for one or two countries at random.
-  * ``100`` could return data for all countries in the dataset.
-* previous_tables: If supplied, filter these tables from the output
-
-Returns a vector of table IDs, e.g. ``c('eurostat/tin00073/2015', 'eurostat/tin00073/2016')``.
+See the [examples vignette](https://tutor-web.github.io/twstats/articles/examples.html)
+for an overview of how to use the module. For reference read the R manuals.
 
 ### TODO:
 
 * Do we need to select tables by a theme (say employment/roads/broadband), or country (e.g. all datasets for the UK)?
 
-## Methods: twstats_get_table
+## Acknowledgements
 
-Fetch a table ID returned from ``twstats_find_tables``.
-
-```
-twstats_get_table(table_id)
-```
-
-For example, ``twstats_get_table('eurostat/tin00073/2007')`` would return:
-
-```
-list(
-    title = "Households with broadband access",
-    source = '<a href="http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=tin00073&lang=en">Eurostat</a>',
-    data = function() { data.frame(
-        year = c('2007', ...),
-        country = c('AT', ...),
-        value = c(22, ...))) }
-```
+This project has received funding from the European Union’s Seventh Framework
+Programme for research, technological development and demonstration under grant
+agreement no. 825696.
