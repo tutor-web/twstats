@@ -104,26 +104,10 @@
 <p>You can install using devtools:</p>
 <pre><code><a href="https://www.rdocumentation.org/packages/devtools/topics/reexports">devtools::install_github('tutor-web/twstats')</a></code></pre>
 </div>
-<div id="methods-twstats_find_tables" class="section level2">
+<div id="usage" class="section level2">
 <h2 class="hasAnchor">
-<a href="#methods-twstats_find_tables" class="anchor"></a>Methods: twstats_find_tables</h2>
-<p>Find tables that match a pattern.</p>
-<pre><code><a href="reference/core_twstats_table.html">twstats_find_tables(required_columns, required_rowcount = NULL, previous_tables = c())</a></code></pre>
-<ul>
-<li>required_columns: A glob of ‘/’ separated column types the table should have, possible types are:</li>
-<li>year: Year of data, e.g. <code>2007</code>
-</li>
-<li>country: Country-code, e.g. <code>AT</code>, <code>CZ</code>.</li>
-<li>value: A numeric value</li>
-<li>perc: A percentage value</li>
-<li>required_rowcount: An approximate power-of-10 count of rows the table should have. For example, for the same dataset:</li>
-<li>
-<code>10</code> could return data for one or two countries at random.</li>
-<li>
-<code>100</code> could return data for all countries in the dataset.</li>
-<li>previous_tables: If supplied, filter these tables from the output</li>
-</ul>
-<p>Returns a vector of table IDs, e.g. <code><a href="https://www.rdocumentation.org/packages/base/topics/c">c('eurostat/tin00073/2015', 'eurostat/tin00073/2016')</a></code>.</p>
+<a href="#usage" class="anchor"></a>Usage</h2>
+<p>See the <a href="https://tutor-web.github.io/twstats/articles/examples.html">examples vignette</a> for an overview of how to use the module. For reference read the R manuals.</p>
 <div id="todo" class="section level3">
 <h3 class="hasAnchor">
 <a href="#todo" class="anchor"></a>TODO:</h3>
@@ -132,19 +116,10 @@
 </ul>
 </div>
 </div>
-<div id="methods-twstats_get_table" class="section level2">
+<div id="acknowledgements" class="section level2">
 <h2 class="hasAnchor">
-<a href="#methods-twstats_get_table" class="anchor"></a>Methods: twstats_get_table</h2>
-<p>Fetch a table ID returned from <code>twstats_find_tables</code>.</p>
-<pre><code><a href="reference/core_twstats_table.html">twstats_get_table(table_id)</a></code></pre>
-<p>For example, <code><a href="reference/core_twstats_table.html">twstats_get_table('eurostat/tin00073/2007')</a></code> would return:</p>
-<pre><code>list(
-    title = "Households with broadband access",
-    source = '&lt;a href="http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=tin00073&amp;lang=en"&gt;Eurostat&lt;/a&gt;',
-    data = function() { data.frame(
-        year = c('2007', ...),
-        country = c('AT', ...),
-        value = c(22, ...))) }</code></pre>
+<a href="#acknowledgements" class="anchor"></a>Acknowledgements</h2>
+<p>This project has received funding from the European Union’s Seventh Framework Programme for research, technological development and demonstration under grant agreement no. 825696.</p>
 </div>
 </div>
   </div>
