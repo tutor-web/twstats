@@ -22,3 +22,4 @@ Suggests:
 VignetteBuilder: knitr
 BugReports: https://github.com/tutor-web/twstats/issues
 LazyData: yes
+RoxygenNote: 6.1.1
