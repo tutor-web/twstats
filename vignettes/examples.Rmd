@@ -33,7 +33,7 @@ head(twstats_find_tables('*/value'))
 Given a table name, you can get more detail:
 
 ```{r}
-twstats_get_table('eurostat/tin00073/IS')
+twstats_get_table('eurostat/tin00073/IS')[c('name', 'title', 'source')]
 ```
 
 Finally, we can get the data itself by calling it's data function:
