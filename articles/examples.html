@@ -97,7 +97,7 @@
 <pre><code>## [1] "eurostat/tin00073/BE" "eurostat/tin00073/BG" "eurostat/tin00073/CZ"
 ## [4] "eurostat/tin00073/DK" "eurostat/tin00073/DE" "eurostat/tin00073/EE"</code></pre>
 <p>Given a table name, you can get more detail:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/core_twstats_table.html">twstats_get_table</a></span>(<span class="st">'eurostat/tin00073/IS'</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/core_twstats_table.html">twstats_get_table</a></span>(<span class="st">'eurostat/tin00073/IS'</span>)[<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">'name'</span>, <span class="st">'title'</span>, <span class="st">'source'</span>)]</code></pre></div>
 <pre><code>## $name
 ## [1] "eurostat/tin00073/IS"
 ## 
@@ -105,22 +105,7 @@
 ## [1] "Households with broadband access in Iceland"
 ## 
 ## $source
-## [1] "&lt;a href=\"http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=tin00073&amp;lang=en\"&gt;Eurostat&lt;/a&gt;"
-## 
-## $columns
-## [1] "year/value"
-## 
-## $rowcount
-## [1] 10
-## 
-## $data
-## function () 
-## {
-##     d &lt;- tbl$data()[country == sel_country, ]
-##     d[, `:=`(country, NULL)]
-##     return(data.table(d))
-## }
-## &lt;environment: 0x558d13963e48&gt;</code></pre>
+## [1] "&lt;a href=\"http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=tin00073&amp;lang=en\"&gt;Eurostat&lt;/a&gt;"</code></pre>
 <p>Finally, we can get the data itself by calling it’s data function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/core_twstats_table.html">twstats_get_table</a></span>(<span class="st">'eurostat/tin00073/IS'</span>)$<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/data">data</a></span>()</code></pre></div>
 <pre><code>##     year Households
