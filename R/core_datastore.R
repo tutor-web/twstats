@@ -1,22 +1,12 @@
 # Internal data.table holding all registrations
-twtables <- data.table(  # NB: Has to have same columns/order as a twstats_table
-    name = character(),
-    title = character(),
-    source = character(),
-    columns = character(),
-    rowcount = numeric(),
-    data = list())
-
+twregistry <- new.env(parent = emptyenv())
 
 # Add a new table(s) to the data.table
 twstats_register_table <- function (new_table) {
-    # NB: Since vector of functions aren't a thing, needs to be a list
-    new_table$data <- list(new_table$data)
-
-    # Combine new table with existing table table
-    twtables <<- rbind(
-        twtables,
-        new_table)
+    if (exists(new_table$name, envir = twregistry)) {
+        stop("A table named ", new_table$name, " already exists")
+    }
+    assign(new_table$name, new_table, envir = twregistry)
 
     return(invisible(NULL))
 }
@@ -24,13 +14,7 @@ twstats_register_table <- function (new_table) {
 
 # Fetch table object for a table
 twstats_get_table <- function (required_name) {
-    rv <- as.list(twtables[name == required_name])
-
-    if (length(rv$data) != 1) {
-        stop("Searching for ", required_name, " found ", length(rv$data), " tables")
-    }
-    rv$data <- rv$data[[1]]
-
+    rv <- get(required_name, envir = twregistry)
     return(rv)
 }
 
@@ -38,6 +22,10 @@ twstats_get_table <- function (required_name) {
 # Search data.table for one that matches columns
 twstats_find_tables <- function (required_columns = NULL, required_rowcount = NULL, previous_tables = c()) {
     cond <- TRUE
+
+    twtables <- data.table::rbindlist(lapply(twregistry, function (x) {
+        x[c('name', 'columns', 'rowcount')]
+    }))
 
     # Add an extra condition to the input
     add_condition <- function (extra, negate = FALSE) {
