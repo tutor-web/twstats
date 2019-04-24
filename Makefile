@@ -16,6 +16,10 @@ check-as-cran: build
 install: build
 	R --vanilla CMD INSTALL --install-tests --html --example "$(TARBALL)"
 
+rebuild-data: install
+	Rscript data-raw/generate_data.R
+	make install
+
 gh-pages:
 	rm -r docs
 	sh /usr/share/doc/git/contrib/workdir/git-new-workdir . docs gh-pages
@@ -29,4 +33,4 @@ gh-pages:
 #  Upload to CRAN
 #  git push && git push --tags
 
-.PHONY: all install build check check-as-cran gh-pages
+.PHONY: all install build check check-as-cran rebuild-data gh-pages
