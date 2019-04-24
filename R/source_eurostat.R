@@ -51,7 +51,7 @@ register_country_comparisons <- function (tbl, sub_rowcount) {
     # For all pairs of countries...
     for (sel_countries in utils::combn(twstat_countries, 2, simplify = FALSE)) {
         s <- twstats_table(paste0(tbl$name, '/', paste0(names(sel_countries), collapse = "-")),
-            columns = gsub('(^|/)country(/|$)', '\\1value\\2', tbl$columns),
+            columns = paste0(gsub('(^|/)country(/|$)', '\\1', tbl$columns), '/value', collapse = '/'),
             rowcount = sub_rowcount,
             title = paste0(tbl$title, ' in ', paste0(sel_countries, collapse = " vs ")),
             source = tbl$source,
