@@ -75,7 +75,7 @@
     <div class="page-header toc-ignore">
       <h1>Using twstats in a tutorweb question</h1>
             
-            <h4 class="date">2019-04-12</h4>
+            <h4 class="date">2019-04-25</h4>
       
       
       <div class="hidden name"><code>tutorweb_question.Rmd</code></div>
@@ -91,8 +91,8 @@
 <p>The following will search for any tables with year &amp; value columns, and have roughly 10 rows in it.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">qn_tables &lt;-<span class="st"> </span><span class="kw"><a href="../reference/core_twstats_table.html">twstats_find_tables</a></span>(<span class="st">'year/value'</span>, <span class="dt">required_rowcount =</span> <span class="dv">10</span>)
 <span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(qn_tables)</code></pre></div>
-<pre><code>## [1] "eurostat/tin00073/BE" "eurostat/tin00073/BG" "eurostat/tin00073/CZ"
-## [4] "eurostat/tin00073/DK" "eurostat/tin00073/DE" "eurostat/tin00073/EE"</code></pre>
+<pre><code>## [1] "cbso/82610ENG/total"  "eurostat/tin00073/SE" "eurostat/tin00073/SI"
+## [4] "eurostat/tin00073/SK" "eurostat/tin00073/RO" "eurostat/tin00073/PT"</code></pre>
 <p>Take this list and hard-code into the question code. Set <code>TW:PERMUTATIONS</code> to the length of this list. The resulting question code should look something like this:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># TW:PERMUTATIONS=3</span>
 
@@ -154,16 +154,16 @@ question &lt;-<span class="st"> </span>function(permutation, data_frames) {
 <p>To update a question, you need to preserve the order of existing tables in <code>twstats_tables</code> to ensure questions don’t change. Provide the existing list with <code>previous_tables</code>, which will filter then from the result:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/core_twstats_table.html">twstats_find_tables</a></span>(<span class="st">'year/value'</span>, <span class="dt">required_rowcount =</span> <span class="dv">10</span>,
     <span class="dt">previous_tables =</span> qn_tables)</code></pre></div>
-<pre><code>##  [1] "eurostat/tin00073/CZ" "eurostat/tin00073/DK" "eurostat/tin00073/DE"
-##  [4] "eurostat/tin00073/EE" "eurostat/tin00073/IE" "eurostat/tin00073/EL"
-##  [7] "eurostat/tin00073/ES" "eurostat/tin00073/FR" "eurostat/tin00073/HR"
-## [10] "eurostat/tin00073/IT" "eurostat/tin00073/CY" "eurostat/tin00073/LV"
-## [13] "eurostat/tin00073/LT" "eurostat/tin00073/LU" "eurostat/tin00073/HU"
-## [16] "eurostat/tin00073/MT" "eurostat/tin00073/NL" "eurostat/tin00073/AT"
-## [19] "eurostat/tin00073/PL" "eurostat/tin00073/PT" "eurostat/tin00073/RO"
-## [22] "eurostat/tin00073/SI" "eurostat/tin00073/SK" "eurostat/tin00073/FI"
-## [25] "eurostat/tin00073/SE" "eurostat/tin00073/UK" "eurostat/tin00073/IS"
-## [28] "eurostat/tin00073/LI" "eurostat/tin00073/NO" "eurostat/tin00073/CH"</code></pre>
+<pre><code>##  [1] "eurostat/tin00073/SE" "eurostat/tin00073/SI" "eurostat/tin00073/SK"
+##  [4] "eurostat/tin00073/RO" "eurostat/tin00073/PT" "eurostat/tin00073/PL"
+##  [7] "eurostat/tin00073/UK" "eurostat/tin00073/CH" "eurostat/tin00073/AT"
+## [10] "eurostat/tin00073/IS" "eurostat/tin00073/IT" "eurostat/tin00073/HR"
+## [13] "eurostat/tin00073/HU" "eurostat/tin00073/IE" "eurostat/tin00073/FR"
+## [16] "eurostat/tin00073/ES" "eurostat/tin00073/FI" "eurostat/tin00073/EE"
+## [19] "eurostat/tin00073/EL" "eurostat/tin00073/DE" "eurostat/tin00073/CY"
+## [22] "eurostat/tin00073/CZ" "eurostat/tin00073/DK" "eurostat/tin00073/MT"
+## [25] "eurostat/tin00073/NL" "eurostat/tin00073/NO" "eurostat/tin00073/LT"
+## [28] "eurostat/tin00073/LU" "eurostat/tin00073/LV" "eurostat/tin00073/LI"</code></pre>
 <p>Then add these tables to <code>qn_tables</code> in the question code, and increase <code>TW:PERMUTATIONS</code> accordingly.</p>
 </div>
 </div>

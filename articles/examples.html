@@ -75,7 +75,7 @@
     <div class="page-header toc-ignore">
       <h1>Examples of using twstats</h1>
             
-            <h4 class="date">2019-04-12</h4>
+            <h4 class="date">2019-04-25</h4>
       
       
       <div class="hidden name"><code>examples.Rmd</code></div>
@@ -91,11 +91,7 @@
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(twstats)</code></pre></div>
 <p>First, find tables you are interested in. Generally you do this by specifying the columns:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/core_twstats_table.html">twstats_find_tables</a></span>(<span class="st">'year/country/value'</span>)</code></pre></div>
-<pre><code>## [1] "eurostat/tin00073"</code></pre>
-<p>…you can also use wildcards if you don’t care what sort of column it is:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(<span class="kw"><a href="../reference/core_twstats_table.html">twstats_find_tables</a></span>(<span class="st">'*/value'</span>))</code></pre></div>
-<pre><code>## [1] "eurostat/tin00073/BE" "eurostat/tin00073/BG" "eurostat/tin00073/CZ"
-## [4] "eurostat/tin00073/DK" "eurostat/tin00073/DE" "eurostat/tin00073/EE"</code></pre>
+<pre><code>## [1] "eurostat/tgs00104" "eurostat/tin00073"</code></pre>
 <p>Given a table name, you can get more detail:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/core_twstats_table.html">twstats_get_table</a></span>(<span class="st">'eurostat/tin00073/IS'</span>)[<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">'name'</span>, <span class="st">'title'</span>, <span class="st">'source'</span>)]</code></pre></div>
 <pre><code>## $name
@@ -123,19 +119,19 @@
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/core_twstats_table.html">twstats_get_table</a></span>(<span class="st">'eurostat/tin00073/DE-FR'</span>)$title</code></pre></div>
 <pre><code>## [1] "Households with broadband access in Germany vs France"</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/core_twstats_table.html">twstats_get_table</a></span>(<span class="st">'eurostat/tin00073/DE-FR'</span>)$<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/data">data</a></span>()</code></pre></div>
-<pre><code>##     year DE FR
-##  1: 2007 50 49
-##  2: 2008 55 57
-##  3: 2009 65 63
-##  4: 2010 75 66
-##  5: 2011 78 70
-##  6: 2012 82 77
-##  7: 2013 85 78
-##  8: 2014 87 77
-##  9: 2015 88 76
-## 10: 2016 90 79
-## 11: 2017 92 79
-## 12: 2018 90 81</code></pre>
+<pre><code>##     year Households - Germany Households - France
+##  1: 2007                   50                  49
+##  2: 2008                   55                  57
+##  3: 2009                   65                  63
+##  4: 2010                   75                  66
+##  5: 2011                   78                  70
+##  6: 2012                   82                  77
+##  7: 2013                   85                  78
+##  8: 2014                   87                  77
+##  9: 2015                   88                  76
+## 10: 2016                   90                  79
+## 11: 2017                   92                  79
+## 12: 2018                   90                  81</code></pre>
 </div>
   </div>
 
