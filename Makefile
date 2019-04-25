@@ -24,7 +24,8 @@ gh-pages:
 	rm -r docs
 	sh /usr/share/doc/git/contrib/workdir/git-new-workdir . docs gh-pages
 	echo 'pkgdown::build_site()' | R --vanilla
-	( cd docs/ && git add -A . && git commit -m "Docs for $(shell git rev-parse --short HEAD)" )
+	cd docs/ && git diff
+	[ -n "$(GH_COMMIT)" ] && ( cd docs/ && git add -A . && git commit -m "Docs for $(shell git rev-parse --short HEAD)" )
 
 # Release steps
 #  Update DESCRIPTION & ChangeLog with new version
