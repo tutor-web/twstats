@@ -1,4 +1,4 @@
-# [https://tutor-web.github.io/](twstats): Fetch random table data for use in questions / examples
+# [twstats](https://tutor-web.github.io/twstats): Fetch random table data for use in questions / examples
 
 This package provides a wrapper around various sources of national statistics
 to provide tables of data that match an approximate template. Whilst an
