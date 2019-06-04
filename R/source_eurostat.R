@@ -73,9 +73,9 @@ twstats_register_eurostat <- function () {
         }
 
         t <- do.call(twstats_table, c(list(twstats_id), eurostat_registrations[[twstats_id]], list(
-            data = function () {
+            data = substitute(function () {
                 convert_eurostat_table(twstats_id)
-            })))
+            }, list(twstats_id = twstats_id)))))
 
         twstats_register_table(t)
         if (grepl('(^|/)country(/|$)', eurostat_registrations[[twstats_id]]$columns)) {
