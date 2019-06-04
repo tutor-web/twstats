@@ -20,7 +20,7 @@
         Name of the table you want to read, e.g. \code{'eurostat/tin00073/BE'}
     }
     \item{required_columns}{
-        Column types your table should have, e.g. \code{'year/country/value'}
+        Column types your table should have, wildcards allowed, e.g. \code{'year/*/value'}
     }
     \item{required_rowcount}{
         Approximate power-of-ten rows the returned tables should have, e.g. \code{10}, \code{100}, \code{1000}.

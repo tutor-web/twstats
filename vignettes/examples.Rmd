@@ -24,6 +24,12 @@ First, find tables you are interested in. Generally you do this by specifying th
 twstats_find_tables('year/country/value')
 ```
 
+...you can also use wildcards if you don't care what sort of column it is:
+
+```{r}
+head(twstats_find_tables('*/value'))
+```
+
 Given a table name, you can get more detail:
 
 ```{r}

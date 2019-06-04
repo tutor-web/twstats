@@ -23,14 +23,9 @@ twstats_get_table <- function (required_name) {
 twstats_find_tables <- function (required_columns = NULL, required_rowcount = NULL, previous_tables = c()) {
     cond <- TRUE
 
-    sort_cols <- function (x) vapply(strsplit(x, '/'), function (y) {
-        paste0(sort(y), collapse = '/')
-    }, character(1))
-
     twtables <- data.table::rbindlist(lapply(twregistry, function (x) {
         x[c('name', 'columns', 'rowcount')]
     }))
-    twtables[, columns := sort_cols(twtables$columns)]
 
     # Add an extra condition to the input
     add_condition <- function (extra, negate = FALSE) {
@@ -43,13 +38,19 @@ twstats_find_tables <- function (required_columns = NULL, required_rowcount = NU
         }
     }
 
+    colglob_regexp <- function (p) {
+        p <- paste0("^", p, "$")
+        p <- gsub("\\.", "\\\\.", p)
+        p <- gsub("\\*", "[^/]*", p)
+        return(p)
+    }
+
     if (!is.null(required_rowcount)) {
         add_condition(call("==", as.symbol('rowcount'), required_rowcount))
     }
 
     if (!is.null(required_columns)) {
-        required_columns <- sort_cols(required_columns)
-        add_condition(quote(columns == required_columns))
+        add_condition(quote(data.table::like(columns, colglob_regexp(required_columns))))
     }
 
     if (length(previous_tables) > 0) {
