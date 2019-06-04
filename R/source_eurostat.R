@@ -178,7 +178,7 @@ convert_eurostat_table <- function (twstats_id) {
 
 
 generate_eurostat_registrations <- function (eurostat_codes) {
-    eurostat_registrations <- list()
+    out <- list()
 
     for (ec in eurostat_codes) {
         twstats_id <- paste0('eurostat/', ec)
@@ -188,17 +188,17 @@ generate_eurostat_registrations <- function (eurostat_codes) {
                 # TODO: Register all sub_ids
                 d <- convert_eurostat_table(attr(d, 'sub_ids')[[1]])
             } else {
-                eurostat_registrations[[twstats_id]] <- list(
+                out[[twstats_id]] <- list(
                     columns = attr(d, 'columns'),
                     rowcount = 10 ^ round(log10(nrow(d))),
                     title = attr(d, 'title'),
                     source = attr(d, 'source'))
             }
         }, error = function (e) {
-            eurostat_registrations[[twstats_id]] <- list(
+            out[[twstats_id]] <- list(
                 message = e$message)
         })
     }
 
-    return(eurostat_registrations)
+    return(out)
 }
