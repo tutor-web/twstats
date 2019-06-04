@@ -89,20 +89,6 @@ twstats_register_eurostat <- function () {
     source_html <- function (id) {
         paste0('<a href="http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=', id, '&lang=en">Eurostat</a>')
     }
-    tin00073 <- twstats_table('eurostat/tin00073',
-        columns = 'year/country/value',
-        rowcount = 100,
-        title = "Households with broadband access",
-        source = source_html('tin00073'),
-        data = function () {
-            d <- data.table::as.data.table(eurostat::get_eurostat('tin00073'))[geo %in% twstat_countries$code, c('time', 'geo', 'values')]
-            d[, time := as.numeric(gsub('\\-.*', '', time))]
-            data.table::setnames(d, c('year', 'country', "Households"))
-            return(data.table(d))  # TODO: Why does this stop being a data.table?
-        })
-    twstats_register_table(tin00073)
-    register_all_countries(tin00073, 10)
-    register_country_comparisons(tin00073, 10)
 }
 
 
