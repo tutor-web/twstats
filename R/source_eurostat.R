@@ -168,6 +168,11 @@ convert_eurostat_table <- function (twstats_id) {
         }
     }
 
+    # Order columns alphabetically, value/perc on end
+    ordering <- order(gsub('^(value|perc)$', 'zzzz\1', columns), method = "shell")
+    columns <- columns[ordering]
+    data.table::setcolorder(d, ordering)
+
     sub_ids <- do.call(paste, sub_ids)
     attr(d, 'sub_ids') <- sub_ids[sub_ids != twstats_id]
     attr(d, 'title') <- paste(d_title, collapse = ', ')
