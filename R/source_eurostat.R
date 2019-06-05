@@ -176,6 +176,7 @@ convert_eurostat_table <- function (twstats_id) {
     if (length(sub_ids) > 0) {
         sub_ids <- paste(twstats_id, sub_ids, sep = '/')
     }
+    attr(d, 'id') <- twstats_id
     attr(d, 'sub_ids') <- sub_ids[sub_ids != twstats_id]
     attr(d, 'title') <- paste(d_title, collapse = ', ')
     attr(d, 'columns') <- paste0(columns, collapse = '/')
@@ -187,20 +188,24 @@ convert_eurostat_table <- function (twstats_id) {
 generate_eurostat_registrations <- function (eurostat_codes) {
     out <- list()
 
+    add_table <- function (d) {
+        str(attr(d, 'id'))
+        out[[attr(d, 'id')]] <<- list(
+            columns = attr(d, 'columns'),
+            rowcount = 10 ^ round(log10(nrow(d))),
+            title = attr(d, 'title'),
+            source = attr(d, 'source'))
+
+        for (sub_id in attr(d, 'sub_ids')) {
+            add_table(convert_eurostat_table(sub_id))
+        }
+    }
+
     for (ec in eurostat_codes) {
         twstats_id <- paste0('eurostat/', ec)
         tbl <- tryCatch({
-            d <- convert_eurostat_table(twstats_id)
-            if (length(attr(d, 'sub_ids')) > 0) {
-                # TODO: Register all sub_ids
-                d <- convert_eurostat_table(attr(d, 'sub_ids')[[1]])
-            } else {
-                out[[twstats_id]] <- list(
-                    columns = attr(d, 'columns'),
-                    rowcount = 10 ^ round(log10(nrow(d))),
-                    title = attr(d, 'title'),
-                    source = attr(d, 'source'))
-            }
+            add_table(convert_eurostat_table(twstats_id))
+
         }, error = function (e) {
             out[[twstats_id]] <- list(
                 message = e$message)
