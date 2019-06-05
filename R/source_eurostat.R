@@ -65,11 +65,11 @@ twstats_register_eurostat <- function () {
 }
 
 
-get_eurostat_dic_aslist <- function (x) {
+get_eurostat_dic_aslist <- memoise::memoise(function (x) {
     out <- eurostat::get_eurostat_dic(x)
     out <- structure(out$full_name, names=out$code_name)
     return(out)
-}
+})
 
 convert_eurostat_table <- function (twstats_id) {
     all_countries <- c(eurostat::eu_countries$code, eurostat::efta_countries$code)
