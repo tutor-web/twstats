@@ -37,8 +37,8 @@ this list. The resulting question code should look something like this:
 # TW:PERMUTATIONS=3
 
 qn_tables <- c(
-    'eurostat/tin00073/BE',
-    'eurostat/tin00073/BG',
+    'eurostat/tin00073/country:BE',
+    'eurostat/tin00073/country:BG',
     'cbso/82610ENG/total')
 
 question <- function(permutation, data_frames) {

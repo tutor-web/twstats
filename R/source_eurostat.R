@@ -1,29 +1,3 @@
-# Given a table with a country column, register a variant for each country
-register_all_countries <- function (tbl, sub_rowcount) {
-    # Country codes we are interested in
-    twstat_countries <- data.table(rbind(eurostat::eu_countries, eurostat::efta_countries))
-
-    filter_data_fn <- function(sel_country) {
-        force(sel_country)  # NB: http://www.win-vector.com/blog/2017/02/iteration-and-closures-in-r/
-        function () {
-            d <- data.table::as.data.table(tbl$data())
-            d <- d[country == sel_country,]
-            d[,country := NULL]
-            return(data.table(d))  # TODO: Why does this stop being a data.table?
-        }
-    }
-
-    for (sel_country in twstat_countries$code) {
-        s <- twstats_table(paste0(tbl$name, '/', sel_country),
-            columns = gsub('(^|/)country', '', tbl$columns),
-            rowcount = sub_rowcount,
-            title = paste0(tbl$title, ' in ', twstat_countries[code == sel_country]$name),
-            source = tbl$source,
-            data = filter_data_fn(sel_country))
-        twstats_register_table(s)
-    }
-}
-
 register_country_comparisons <- function (tbl, sub_rowcount) {
     # Country codes we are interested in
     twstat_countries <- structure(eurostat::eu_countries$name, names = eurostat::eu_countries$code)
@@ -80,7 +54,6 @@ twstats_register_eurostat <- function () {
         twstats_register_table(t)
         if (grepl('(^|/)country(/|$)', eurostat_registrations[[twstats_id]]$columns)) {
             # Register country variants too
-            register_all_countries(t, 10)
             register_country_comparisons(t, 10)
         }
     }
@@ -99,7 +72,12 @@ get_eurostat_dic_aslist <- function (x) {
 }
 
 convert_eurostat_table <- function (twstats_id) {
-    twstat_countries <- structure(eurostat::eu_countries$name, names = eurostat::eu_countries$code)
+    all_countries <- c(eurostat::eu_countries$code, eurostat::efta_countries$code)
+    # NB: There is no clean definition of EU codes. eurostat/country_list.R
+    # doesn't parse the table for us since it's incomplete and wrong.
+    # Just get the most useful definitions
+    all_areas <- c('EA', 'EU')
+    eurostat_geo <- get_eurostat_dic_aslist('geo')
     eurostat_unit <- get_eurostat_dic_aslist('unit')
     title_list <- eurostat::get_eurostat_toc()
     title_list <- structure(title_list$title, names=title_list$code)
@@ -122,9 +100,19 @@ convert_eurostat_table <- function (twstats_id) {
 
         } else if (col_name == 'geo') {
             # Filter out totals from any geo column
-            d <- d[d$geo %in% names(twstat_countries), ]
-            names(d)[names(d) == 'geo'] <- 'country'
-            columns[columns == 'geo'] <- 'country'
+            sel_geo <- gsub('^(country|area):', '', id_parts[startsWith(id_parts, 'country:') | startsWith(id_parts, 'area:')])
+            if (length(sel_geo) > 0) {
+                d <- d[d$geo == sel_geo, !(colnames(d) == 'geo')]
+                d_title <- c(d_title, eurostat_geo[[sel_geo]])
+                columns <- columns[columns != col_name]
+            } else {
+                sub_ids <- c(sub_ids, paste0("area:", intersect(levels(d$geo), all_areas)))
+                avail_countries <- intersect(levels(d$geo), all_countries)
+                sub_ids <- c(sub_ids, paste0("country:", avail_countries))
+                d <- d[d$geo %in% all_countries, ]
+                names(d)[names(d) == 'geo'] <- 'country'
+                columns[columns == 'geo'] <- 'country'
+            }
 
         } else if (col_name == 'sex') {
             # Discard any sex column totals
