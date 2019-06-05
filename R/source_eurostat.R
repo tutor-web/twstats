@@ -109,7 +109,7 @@ convert_eurostat_table <- function (twstats_id) {
     d <- eurostat::get_eurostat(id_parts[2], select_time = 'Y')
     d_title <- title_list[[id_parts[2]]]
 
-    sub_ids <- list(sep = '/', 'eurostat', id_parts[2])
+    sub_ids <- character(0)
     columns <- colnames(d)
 
     # Convert all columns into something we know
@@ -144,7 +144,7 @@ convert_eurostat_table <- function (twstats_id) {
                 d_title <- c(d_title, eurostat_unit[[sel_unit[1]]])
             } else {
                 # Add units to list of potential IDs
-                sub_ids <- c(sub_ids, list(paste0("unit:", levels(d$unit))))
+                sub_ids <- c(sub_ids, paste0("unit:", levels(d$unit)))
             }
             columns <- columns[columns != col_name]
 
@@ -173,7 +173,9 @@ convert_eurostat_table <- function (twstats_id) {
     columns <- columns[ordering]
     data.table::setcolorder(d, ordering)
 
-    sub_ids <- do.call(paste, sub_ids)
+    if (length(sub_ids) > 0) {
+        sub_ids <- paste(twstats_id, sub_ids, sep = '/')
+    }
     attr(d, 'sub_ids') <- sub_ids[sub_ids != twstats_id]
     attr(d, 'title') <- paste(d_title, collapse = ', ')
     attr(d, 'columns') <- paste0(columns, collapse = '/')
