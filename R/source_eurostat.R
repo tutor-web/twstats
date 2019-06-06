@@ -84,6 +84,9 @@ convert_eurostat_table <- function (twstats_id) {
 
     # Get all data associated
     id_parts <- strsplit(twstats_id, '/')[[1]]
+    if (length(id_parts) < 2) {
+        stop("Not enough id_parts: ", twstats_id)
+    }
     d <- eurostat::get_eurostat(id_parts[2], select_time = 'Y')
     d_title <- title_list[[id_parts[2]]]
 
