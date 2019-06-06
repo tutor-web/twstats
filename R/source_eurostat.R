@@ -220,6 +220,7 @@ generate_eurostat_registrations <- function (eurostat_codes) {
             add_table(convert_eurostat_table(twstats_id))
 
         }, error = function (e) {
+            cat("****** ", ec, ":", e$message, " ******\n")
             out[[twstats_id]] <- list(
                 message = e$message)
         })
