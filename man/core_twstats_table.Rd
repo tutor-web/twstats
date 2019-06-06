@@ -17,7 +17,7 @@
 
 \arguments{
     \item{required_name}{
-        Name of the table you want to read, e.g. \code{'eurostat/tin00073/BE'}
+        Name of the table you want to read, e.g. \code{'eurostat/tin00073/country:BE'}
     }
     \item{required_columns}{
         Column types your table should have, wildcards allowed, e.g. \code{'year/*/value'}
@@ -26,7 +26,7 @@
         Approximate power-of-ten rows the returned tables should have, e.g. \code{10}, \code{100}, \code{1000}.
     }
     \item{previous_tables}{
-        Character vector of already-known tables, filtered from results, e.g. \code{c('eurostat/tin00073/BE', 'eurostat/tin00073/UK')}.
+        Character vector of already-known tables, filtered from results, e.g. \code{c('eurostat/tin00073/country:BE', 'eurostat/tin00073/country:UK')}.
     }
 }
 
@@ -45,7 +45,7 @@ Find and retrieve data from twstats.
 table_names <- twstats_find_tables('country/value')
 
 # Get a twstats table, extract the title and data
-tbl <- twstats_get_table('eurostat/tin00073/BE')
+tbl <- twstats_get_table('eurostat/tin00073/country:BE')
 title <- tbl$title
 df <- tbl$data()
 }}
