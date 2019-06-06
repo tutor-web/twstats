@@ -71,6 +71,15 @@ get_eurostat_dic_aslist <- memoise::memoise(function (x) {
     return(out)
 })
 
+
+paste0_if_nonempty <- function (...) {
+    for (x in list(...)) {
+        if (length(x) == 0) return(character(0))
+    }
+    return(paste0(...))
+}
+
+
 convert_eurostat_table <- function (twstats_id) {
     all_countries <- c(eurostat::eu_countries$code, eurostat::efta_countries$code)
     # NB: There is no clean definition of EU codes. eurostat/country_list.R
@@ -92,6 +101,7 @@ convert_eurostat_table <- function (twstats_id) {
 
     sub_ids <- character(0)
     columns <- colnames(d)
+    sel_unit <- ''
 
     # Convert all columns into something we know
     for (col_name in colnames(d)) {
@@ -109,17 +119,19 @@ convert_eurostat_table <- function (twstats_id) {
                 d_title <- c(d_title, eurostat_geo[[sel_geo]])
                 columns <- columns[columns != col_name]
             } else {
-                sub_ids <- c(sub_ids, paste0("area:", intersect(levels(d$geo), all_areas)))
+                sub_ids <- c(sub_ids, paste0_if_nonempty("area:", intersect(levels(d$geo), all_areas)))
                 avail_countries <- intersect(levels(d$geo), all_countries)
-                sub_ids <- c(sub_ids, paste0("country:", avail_countries))
+                sub_ids <- c(sub_ids, paste0_if_nonempty("country:", avail_countries))
                 d <- d[d$geo %in% all_countries, ]
                 names(d)[names(d) == 'geo'] <- 'country'
                 columns[columns == 'geo'] <- 'country'
             }
 
         } else if (col_name == 'sex') {
-            # Discard any sex column totals
-            d <- d[!(d$sex %in% c('T', 'DIFF', 'NAP')),]
+            if (length(levels(d$sex)) > 1) {
+                # Discard any sex column totals
+                d <- d[!(d$sex %in% c('T', 'DIFF', 'NAP')),]
+            }
 
         } else if (col_name == 'unit') {
             # Filter table by any selected unit
@@ -129,19 +141,25 @@ convert_eurostat_table <- function (twstats_id) {
             } else {
                 sel_unit <- gsub('^unit:', '', id_parts[startsWith(id_parts, 'unit:')])
             }
+
             if (length(sel_unit) > 0) {
-                d <- d[d$unit == sel_unit[1], !(colnames(d) == 'unit')]
+                # Select given unit
+                d <- d[d$unit == sel_unit, !(colnames(d) == 'unit')]
                 names(d)[names(d) == 'values'] <- eurostat_unit[[sel_unit[1]]]
                 d_title <- c(d_title, eurostat_unit[[sel_unit[1]]])
             } else {
-                # Add units to list of potential IDs
-                sub_ids <- c(sub_ids, paste0("unit:", levels(d$unit)))
+                # Multiple-unit tables are meaningless, but their sub_ids aren't
+                sub_ids <- c(sub_ids, paste0_if_nonempty("unit:", levels(d$unit)))
+                return(structure(NA, sub_ids = paste(twstats_id, sub_ids, sep = '/')))
             }
             columns <- columns[columns != col_name]
 
+            if (isTRUE(startsWith(sel_unit, 'PC_') || sel_unit == 'PC')) {
+                columns[columns == 'values'] <- 'perc'
+            }
+
         } else if (col_name == 'values') {
             # Values should have been renamed by the unit column
-            columns[columns == 'values'] <- ifelse(startsWith(sel_unit, 'PC_'), 'perc', 'value')
 
         } else if (length(levels(d[[col_name]])) == 1) {
             # Column only has one level (indic_*, e.g.), ignore it.
@@ -158,6 +176,9 @@ convert_eurostat_table <- function (twstats_id) {
             stop("Unknown column ", col_name)
         }
     }
+
+    # Rename any remaining "values" columns
+    columns[columns == 'values'] <- 'value'
 
     # Order columns alphabetically, value/perc on end
     ordering <- order(gsub('^(value|perc)$', 'zzzz\1', columns), method = "shell")
@@ -180,12 +201,13 @@ generate_eurostat_registrations <- function (eurostat_codes) {
     out <- list()
 
     add_table <- function (d) {
-        str(attr(d, 'id'))
-        out[[attr(d, 'id')]] <<- list(
-            columns = attr(d, 'columns'),
-            rowcount = 10 ^ round(log10(nrow(d))),
-            title = attr(d, 'title'),
-            source = attr(d, 'source'))
+        if (length(d) > 0 && !is.na(d) && nrow(d) > 0) {
+            out[[attr(d, 'id')]] <<- list(
+                columns = attr(d, 'columns'),
+                rowcount = 10 ^ round(log10(nrow(d))),
+                title = attr(d, 'title'),
+                source = attr(d, 'source'))
+        }
 
         for (sub_id in attr(d, 'sub_ids')) {
             add_table(convert_eurostat_table(sub_id))
