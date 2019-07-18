@@ -127,12 +127,6 @@ convert_eurostat_table <- function (twstats_id) {
                 columns[columns == 'geo'] <- 'country'
             }
 
-        } else if (col_name == 'sex') {
-            if (length(levels(d$sex)) > 1) {
-                # Discard any sex column totals
-                d <- d[!(d$sex %in% c('T', 'DIFF', 'NAP')),]
-            }
-
         } else if (col_name == 'unit') {
             # Filter table by any selected unit
             if (length(levels(d$unit)) == 1) {
@@ -161,6 +155,12 @@ convert_eurostat_table <- function (twstats_id) {
             # Column only has one level (indic_*, e.g.), ignore it.
             d <- d[,!(colnames(d) == col_name)]
             columns <- columns[columns != col_name]
+
+        } else if (col_name == 'sex') {
+            if (length(levels(d$sex)) > 1) {
+                # Discard any sex column totals
+                d <- d[!(d$sex %in% c('T', 'DIFF', 'NAP')),]
+            }
 
         } else if ("TOTAL" %in% levels(d[[col_name]])) {
             stop("Unknown column (with total) ", col_name)
