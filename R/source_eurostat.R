@@ -154,12 +154,8 @@ convert_eurostat_table <- function (twstats_id) {
             }
             columns <- columns[columns != col_name]
 
-            if (isTRUE(startsWith(sel_unit, 'PC_') || sel_unit == 'PC')) {
-                columns[columns == 'values'] <- 'perc'
-            }
-
         } else if (col_name == 'values') {
-            # Values should have been renamed by the unit column
+            # Values get renamed last, once any unit column is processed.
 
         } else if (length(levels(d[[col_name]])) == 1) {
             # Column only has one level (indic_*, e.g.), ignore it.
@@ -178,7 +174,8 @@ convert_eurostat_table <- function (twstats_id) {
     }
 
     # Rename any remaining "values" columns
-    columns[columns == 'values'] <- 'value'
+    columns[columns == 'values'] <- ifelse(isTRUE(startsWith(sel_unit, 'PC_') || sel_unit == 'PC'), 'perc', 'value')
+    names(d)[names(d) == 'values'] <- ifelse(sel_unit == '', 'value', eurostat_unit[[sel_unit[1]]])
 
     # Order columns alphabetically, value/perc on end
     ordering <- order(gsub('^(value|perc)$', 'zzzz\1', columns), method = "shell")
