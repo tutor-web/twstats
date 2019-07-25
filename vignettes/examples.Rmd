@@ -47,6 +47,6 @@ It's actual name in the data tells you what the values represent.
 In addition to the above, there are tables with multiple value columns, for comparison questions. For example:
 
 ```{r, message=FALSE}
-twstats_get_table('eurostat/tin00073/DE-FR')$title
-twstats_get_table('eurostat/tin00073/DE-FR')$data()
+twstats_get_table('eurostat/tin00073/country:DE/country:FR')$title
+twstats_get_table('eurostat/tin00073/country:DE/country:FR')$data()
 ```

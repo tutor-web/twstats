@@ -1,39 +1,3 @@
-register_country_comparisons <- function (tbl, sub_rowcount) {
-    # Country codes we are interested in
-    twstat_countries <- structure(eurostat::eu_countries$name, names = eurostat::eu_countries$code)
-
-    filter_data_fn <- function(sel_countries) {
-        force(sel_countries)  # NB: http://www.win-vector.com/blog/2017/02/iteration-and-closures-in-r/
-        function () {
-            val_columns <- strsplit(tbl$columns, '/')[[1]] == 'value'
-
-            # Get values for each country, rename value columns
-            tbl_1 <- data.table::as.data.table(tbl$data())
-            tbl_1 <- tbl_1[country == names(sel_countries)[[1]],]
-            colnames(tbl_1)[val_columns] <- paste0(colnames(tbl_1)[val_columns], ' - ', sel_countries[[1]])
-            tbl_1[,country := NULL]
-
-            tbl_2 <- data.table::as.data.table(tbl$data())
-            tbl_2 <- tbl_2[country == names(sel_countries)[[2]],]
-            colnames(tbl_2)[val_columns] <- paste0(colnames(tbl_2)[val_columns], ' - ', sel_countries[[2]])
-            tbl_2[,country := NULL]
-
-            return(merge(tbl_1, tbl_2))
-        }
-    }
-
-    # For all pairs of countries...
-    for (sel_countries in utils::combn(twstat_countries, 2, simplify = FALSE)) {
-        s <- twstats_table(paste0(tbl$name, '/', paste0(names(sel_countries), collapse = "-")),
-            columns = paste0(gsub('(^|/)country(/|$)', '\\1', tbl$columns), '/value', collapse = '/'),
-            rowcount = sub_rowcount,
-            title = paste0(tbl$title, ' in ', paste0(sel_countries, collapse = " vs ")),
-            source = tbl$source,
-            data = filter_data_fn(sel_countries))
-        twstats_register_table(s)
-    }
-}
-
 twstats_register_eurostat <- function () {
     if (!requireNamespace('eurostat', quietly = TRUE)) {
         warning("eurostat package not available, not registering eurostat tables")
@@ -52,10 +16,6 @@ twstats_register_eurostat <- function () {
             }, list(twstats_id = twstats_id)))))
 
         twstats_register_table(t)
-        if (grepl('(^|/)country(/|$)', eurostat_registrations[[twstats_id]]$columns)) {
-            # Register country variants too
-            register_country_comparisons(t, 10)
-        }
     }
 
     twstat_countries <- data.table(rbind(eurostat::eu_countries, eurostat::efta_countries))
@@ -102,6 +62,7 @@ convert_eurostat_table <- function (twstats_id) {
     sub_ids <- character(0)
     columns <- colnames(d)
     sel_unit <- ''
+    sel_geo <- c()
 
     # Convert all columns into something we know
     for (col_name in colnames(d)) {
@@ -114,7 +75,10 @@ convert_eurostat_table <- function (twstats_id) {
         } else if (col_name == 'geo') {
             # Filter out totals from any geo column
             sel_geo <- gsub('^(country|area):', '', id_parts[startsWith(id_parts, 'country:') | startsWith(id_parts, 'area:')])
-            if (length(sel_geo) > 0) {
+            if (length(sel_geo) == 2) {
+                d <- d[d$geo %in% sel_geo, ]  # NB: Don't remove geo column yet, need to combine once values are sorted out
+                d_title <- c(d_title, paste0(eurostat_geo[sel_geo], collapse = "-"))
+            } else if (length(sel_geo) == 1) {
                 d <- d[d$geo == sel_geo, !(colnames(d) == 'geo')]
                 d_title <- c(d_title, eurostat_geo[[sel_geo]])
                 columns <- columns[columns != col_name]
@@ -122,6 +86,12 @@ convert_eurostat_table <- function (twstats_id) {
                 sub_ids <- c(sub_ids, paste0_if_nonempty("area:", intersect(levels(d$geo), all_areas)))
                 avail_countries <- intersect(levels(d$geo), all_countries)
                 sub_ids <- c(sub_ids, paste0_if_nonempty("country:", avail_countries))
+
+                if (length(avail_countries) > 2) {
+                    # Include country-combinations
+                    sub_ids <- c(sub_ids, utils::combn(avail_countries, 2, function (x) { paste0('country:', x, collapse = "/") }))
+                }
+
                 d <- d[d$geo %in% all_countries, ]
                 names(d)[names(d) == 'geo'] <- 'country'
                 columns[columns == 'geo'] <- 'country'
@@ -176,6 +146,20 @@ convert_eurostat_table <- function (twstats_id) {
     # Rename any remaining "values" columns
     columns[columns == 'values'] <- ifelse(isTRUE(startsWith(sel_unit, 'PC_') || sel_unit == 'PC'), 'perc', 'value')
     names(d)[names(d) == 'values'] <- ifelse(sel_unit == '', 'value', eurostat_unit[[sel_unit[1]]])
+
+    # Combine any country comparisons into multiple columns
+    if (length(sel_geo) == 2) {
+        val_columns <- (columns == 'value' | columns == 'perc')
+
+        table_part <- function (tbl, sel_cty) {
+            colnames(tbl)[val_columns] <- paste0(colnames(tbl)[val_columns], ' - ', sel_cty)
+            return(tbl[tbl$geo == sel_cty, !(colnames(tbl) == 'geo')])
+        }
+
+        d <- merge(table_part(d, sel_geo[[1]]), table_part(d, sel_geo[[2]]))
+        columns <- c(columns, columns[val_columns])
+        columns <- columns[columns != 'geo']
+    }
 
     # Order columns alphabetically, value/perc on end
     ordering <- order(gsub('^(value|perc)$', 'zzzz\1', columns), method = "shell")
