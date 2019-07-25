@@ -17,11 +17,6 @@ twstats_register_eurostat <- function () {
 
         twstats_register_table(t)
     }
-
-    twstat_countries <- data.table(rbind(eurostat::eu_countries, eurostat::efta_countries))
-    source_html <- function (id) {
-        paste0('<a href="http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=', id, '&lang=en">Eurostat</a>')
-    }
 }
 
 
