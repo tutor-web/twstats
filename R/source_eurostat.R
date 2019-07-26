@@ -4,16 +4,19 @@ twstats_register_eurostat <- function () {
         return()
     }
 
-    for (twstats_id in names(eurostat_registrations)) {
-        if (!('columns' %in% names(eurostat_registrations[[twstats_id]]))) {
+    for (r in eurostat_registrations) {
+        if (!('columns' %in% names(r))) {
             # An error, ignore it
             next()
         }
 
-        t <- do.call(twstats_table, c(list(twstats_id), eurostat_registrations[[twstats_id]], list(
-            data = substitute(function () {
-                convert_eurostat_table(twstats_id)
-            }, list(twstats_id = twstats_id)))))
+        data_fn <- substitute(function () {
+            convert_eurostat_table(x)
+        }, list(x = r$name))
+
+        t <- do.call(twstats_table, c(
+            r,
+            list(data = data_fn)))
 
         twstats_register_table(t)
     }
@@ -174,15 +177,16 @@ convert_eurostat_table <- function (twstats_id) {
 
 
 generate_eurostat_registrations <- function (eurostat_codes) {
-    out <- list()
+    out <- new.env()
 
     add_table <- function (d) {
         if (length(d) > 0 && !is.na(d) && nrow(d) > 0) {
-            out[[attr(d, 'id')]] <<- list(
+            assign(attr(d, 'id'), list(
+                name = attr(d, 'id'),
                 columns = attr(d, 'columns'),
                 rowcount = 10 ^ round(log10(nrow(d))),
                 title = attr(d, 'title'),
-                source = attr(d, 'source'))
+                source = attr(d, 'source')), envir = out)
         }
 
         for (sub_id in attr(d, 'sub_ids')) {
@@ -197,10 +201,11 @@ generate_eurostat_registrations <- function (eurostat_codes) {
 
         }, error = function (e) {
             cat("****** ", ec, ":", e$message, " ******\n")
-            out[[twstats_id]] <- list(
-                message = e$message)
+            assign(twstats_id, list(
+                name = twstats_id,
+                message = e$message), envir = out)
         })
     }
 
-    return(out)
+    return(mget(ls(out), envir = out))
 }
