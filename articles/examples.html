@@ -75,7 +75,7 @@
     <div class="page-header toc-ignore">
       <h1>Examples of using twstats</h1>
             
-            <h4 class="date">2019-05-28</h4>
+            <h4 class="date">2019-07-26</h4>
       
       
       <div class="hidden name"><code>examples.Rmd</code></div>
@@ -91,47 +91,54 @@
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(twstats)</code></pre></div>
 <p>First, find tables you are interested in. Generally you do this by specifying the columns:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/core_twstats_table.html">twstats_find_tables</a></span>(<span class="st">'year/country/value'</span>)</code></pre></div>
-<pre><code>## [1] "eurostat/tgs00104" "eurostat/tin00073"</code></pre>
+<pre><code>## character(0)</code></pre>
+<p>…you can also use wildcards if you don’t care what sort of column it is:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/head">head</a></span>(<span class="kw"><a href="../reference/core_twstats_table.html">twstats_find_tables</a></span>(<span class="st">'*/value'</span>))</code></pre></div>
+<pre><code>## [1] "eurostat/tps00070/country:DE" "eurostat/tps00070/country:CY"
+## [3] "eurostat/tps00070/country:CZ" "eurostat/tps00070/country:DK"
+## [5] "eurostat/tps00070/country:EE" "eurostat/tps00070/country:EL"</code></pre>
 <p>Given a table name, you can get more detail:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/core_twstats_table.html">twstats_get_table</a></span>(<span class="st">'eurostat/tin00073/IS'</span>)[<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">'name'</span>, <span class="st">'title'</span>, <span class="st">'source'</span>)]</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/core_twstats_table.html">twstats_get_table</a></span>(<span class="st">'eurostat/tin00073/country:IS'</span>)[<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">'name'</span>, <span class="st">'title'</span>, <span class="st">'source'</span>)]</code></pre></div>
 <pre><code>## $name
-## [1] "eurostat/tin00073/IS"
+## [1] "eurostat/tin00073/country:IS"
 ## 
 ## $title
-## [1] "Households with broadband access in Iceland"
+## [1] "Households with broadband access, Percentage of households, Iceland"
 ## 
 ## $source
 ## [1] "&lt;a href=\"http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=tin00073&amp;lang=en\"&gt;Eurostat&lt;/a&gt;"</code></pre>
 <p>Finally, we can get the data itself by calling it’s data function:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/core_twstats_table.html">twstats_get_table</a></span>(<span class="st">'eurostat/tin00073/IS'</span>)$<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/data">data</a></span>()</code></pre></div>
-<pre><code>##     year Households
-##  1: 2007         76
-##  2: 2008         83
-##  3: 2009         87
-##  4: 2010         87
-##  5: 2011         92
-##  6: 2012         93
-##  7: 2013         95
-##  8: 2014         93
-##  9: 2017         96
-## 10: 2018         97</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/core_twstats_table.html">twstats_get_table</a></span>(<span class="st">'eurostat/tin00073/country:IS'</span>)$<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/data">data</a></span>()</code></pre></div>
+<pre><code>## # A tibble: 10 x 2
+##     year `Percentage of households`
+##    &lt;dbl&gt;                      &lt;dbl&gt;
+##  1  2007                         76
+##  2  2008                         83
+##  3  2009                         87
+##  4  2010                         87
+##  5  2011                         92
+##  6  2012                         93
+##  7  2013                         95
+##  8  2014                         93
+##  9  2017                         96
+## 10  2018                         97</code></pre>
 <p>The value column specifies any continuous numeric value. It’s actual name in the data tells you what the values represent. In addition to the above, there are tables with multiple value columns, for comparison questions. For example:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/core_twstats_table.html">twstats_get_table</a></span>(<span class="st">'eurostat/tin00073/DE-FR'</span>)$title</code></pre></div>
-<pre><code>## [1] "Households with broadband access in Germany vs France"</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/core_twstats_table.html">twstats_get_table</a></span>(<span class="st">'eurostat/tin00073/DE-FR'</span>)$<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/data">data</a></span>()</code></pre></div>
-<pre><code>##     year Households - Germany Households - France
-##  1: 2007                   50                  49
-##  2: 2008                   55                  57
-##  3: 2009                   65                  63
-##  4: 2010                   75                  66
-##  5: 2011                   78                  70
-##  6: 2012                   82                  77
-##  7: 2013                   85                  78
-##  8: 2014                   87                  77
-##  9: 2015                   88                  76
-## 10: 2016                   90                  79
-## 11: 2017                   92                  79
-## 12: 2018                   90                  81</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/core_twstats_table.html">twstats_get_table</a></span>(<span class="st">'eurostat/tin00073/country:DE/country:FR'</span>)$title</code></pre></div>
+<pre><code>## [1] "Households with broadband access, Percentage of households, Germany (until 1990 former territory of the FRG)-France"</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/core_twstats_table.html">twstats_get_table</a></span>(<span class="st">'eurostat/tin00073/country:DE/country:FR'</span>)$<span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/data">data</a></span>()</code></pre></div>
+<pre><code>##    year Percentage of households - DE Percentage of households - FR
+## 1  2007                            50                            49
+## 2  2008                            55                            57
+## 3  2009                            65                            63
+## 4  2010                            75                            66
+## 5  2011                            78                            70
+## 6  2012                            82                            77
+## 7  2013                            85                            78
+## 8  2014                            87                            77
+## 9  2015                            88                            76
+## 10 2016                            90                            79
+## 11 2017                            92                            79
+## 12 2018                            90                            81</code></pre>
 </div>
   </div>
 

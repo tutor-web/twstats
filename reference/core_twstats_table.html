@@ -131,11 +131,11 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>required_name</th>
-      <td><p>Name of the table you want to read, e.g. <code>'eurostat/tin00073/BE'</code></p></td>
+      <td><p>Name of the table you want to read, e.g. <code>'eurostat/tin00073/country:BE'</code></p></td>
     </tr>
     <tr>
       <th>required_columns</th>
-      <td><p>Column types your table should have, e.g. <code>'year/country/value'</code></p></td>
+      <td><p>Column types your table should have, wildcards allowed, e.g. <code>'year/*/value'</code></p></td>
     </tr>
     <tr>
       <th>required_rowcount</th>
@@ -143,7 +143,7 @@
     </tr>
     <tr>
       <th>previous_tables</th>
-      <td><p>Character vector of already-known tables, filtered from results, e.g. <code><a href='https://www.rdocumentation.org/packages/base/topics/c'>c('eurostat/tin00073/BE', 'eurostat/tin00073/UK')</a></code>.</p></td>
+      <td><p>Character vector of already-known tables, filtered from results, e.g. <code><a href='https://www.rdocumentation.org/packages/base/topics/c'>c('eurostat/tin00073/country:BE', 'eurostat/tin00073/country:UK')</a></code>.</p></td>
     </tr>
     </table>
     
@@ -163,7 +163,7 @@
 <span class='no'>table_names</span> <span class='kw'>&lt;-</span> <span class='fu'>twstats_find_tables</span>(<span class='st'>'country/value'</span>)
 
 <span class='co'># Get a twstats table, extract the title and data</span>
-<span class='no'>tbl</span> <span class='kw'>&lt;-</span> <span class='fu'>twstats_get_table</span>(<span class='st'>'eurostat/tin00073/BE'</span>)
+<span class='no'>tbl</span> <span class='kw'>&lt;-</span> <span class='fu'>twstats_get_table</span>(<span class='st'>'eurostat/tin00073/country:BE'</span>)
 <span class='no'>title</span> <span class='kw'>&lt;-</span> <span class='no'>tbl</span>$<span class='no'>title</span>
 <span class='no'>df</span> <span class='kw'>&lt;-</span> <span class='no'>tbl</span>$<span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>()
 <span class='co'># }</span></pre>
