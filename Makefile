@@ -21,11 +21,12 @@ rebuild-data: install
 	make install
 
 gh-pages:
-	rm -r docs
+	[ -d docs ] && rm -r docs
 	sh /usr/share/doc/git/contrib/workdir/git-new-workdir . docs gh-pages
 	echo 'pkgdown::build_site()' | R --vanilla
 	cd docs/ && git diff
 	[ -n "$(GH_COMMIT)" ] && ( cd docs/ && git add -A . && git commit -m "Docs for $(shell git rev-parse --short HEAD)" ) || true
+	[ -d docs ] && rm -r docs
 
 # Release steps
 #  Update DESCRIPTION & ChangeLog with new version
