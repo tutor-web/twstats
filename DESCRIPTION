@@ -18,7 +18,8 @@ Suggests:
     cbsodataR,
     eurostat,
     knitr,
-    rmarkdown
+    rmarkdown,
+    unittest
 VignetteBuilder: knitr
 BugReports: https://github.com/tutor-web/twstats/issues
 LazyData: yes
