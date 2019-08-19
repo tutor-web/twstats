@@ -18,6 +18,7 @@ Suggests:
     cbsodataR,
     eurostat,
     knitr,
+    pxweb,
     rmarkdown,
     unittest
 VignetteBuilder: knitr

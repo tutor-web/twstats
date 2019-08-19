@@ -1,5 +1,5 @@
 # Create a twstats table
-twstats_table <- function (name, title, source, columns, rowcount, data) {
+twstats_table <- function (name, title, source, columns, rowcount = 0, data) {
     check_function <- function (x) {
         if (!is.function(x)) {
             stop(deparse(match.call()[[2]]), " is not a function")
