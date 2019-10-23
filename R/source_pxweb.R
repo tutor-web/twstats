@@ -67,40 +67,66 @@ generate_pxweb_registrations <- function (uris) {
         return(uri)
     }
 
-    add_registration <- function (px_uri, meta = pxweb::pxweb_get(px_uri), px_query = list()) {
+    add_registration <- function (px_uri, meta = pxweb::pxweb_get(px_uri), px_query = list(), descend = TRUE) {
         columns <- c()
         output_cols <- c()
         name <- c('pxweb', short_name(px_uri))
         title <- meta$title
+        re_total <- 'total|both|^whole country$|^men and women$'
 
         # Iterate over columns, assume english names are reasonably consistent
-        for (v in meta$variables) switch(tolower(v$text),
+        for (v in meta$variables) switch(gsub('^gender$', 'sex', tolower(v$text)),
             year = {
                 columns <- c(columns, 'year')
                 output_cols <- c(output_cols, v$text)
                 px_query[[v$code]] <- '*'  # Fetch all years
             },
-            sex = {
-                columns <- c(columns, 'sex')
+            period = {
+                columns <- c(columns, 'year')
                 output_cols <- c(output_cols, v$text)
-                # Remove any total from output
-                px_query[[v$code]] <- v$values[!grepl('total|both', tolower(v$valueTexts), perl = TRUE)]
+                px_query[[v$code]] <- '*'  # Fetch all periods, call them years
+            },
+            sex = {
+                if (is.null(px_query[[v$code]])) {
+                    columns <- c(columns, 'sex')
+                    output_cols <- c(output_cols, v$text)
+                    # Remove any total from output
+                    px_query[[v$code]] <- v$values[!grepl(re_total, v$valueTexts, ignore.case = TRUE, perl = TRUE)]
+
+                    if (descend) {
+                        # Add the total sub-table too
+                        sub_query <- px_query
+                        sub_query[[v$code]] <- 'total'
+                        add_registration(px_uri, meta, sub_query, descend = FALSE)
+                    }
+                } else if (identical(px_query[[v$code]], 'total')) {
+                    # Select total column in output
+                    # NB: We're doing the inverse of below and adding to name for backward-compatibility
+                    px_query[[v$code]] <- v$values[grepl(re_total, v$valueTexts, ignore.case = TRUE, perl = TRUE)]
+                    name <- c(name, paste(v$code, 'total', sep = ":"))
+                    title <- paste(title, v$valueText[v$values == px_query[[v$code]]], sep = ", ")
+                }
             },
             {  # default
-                tot_column <- grep('total', tolower(v$valueTexts), value = FALSE)[1]
-                tot_value <- ifelse(is.na(tot_column), 0, v$values[tot_column])
+                tot_column <- grep(re_total, v$valueTexts, ignore.case = TRUE, value = FALSE)[1]
+                tot_value <- v$values[tot_column]
 
-                if (is.null(px_query[[v$code]])) {
+                if (is.na(tot_column)) {
+                    # No total, choose first value arbitrarily (we could choose all, but the combinatorial explosion takes too long)
+                    px_query[[v$code]] <- v$values[1]
+                    name <- c(name, paste(v$code, px_query[[v$code]], sep = ":"))
+                    title <- paste(title, v$valueText[v$values == px_query[[v$code]]], sep = ", ")
+                } else if (is.null(px_query[[v$code]])) {
                     # No explicit selection, select total if there is one
                     for (sub_v in v$values) {
                         if (sub_v == tot_value) {
                             # This is the total column, and the "default", not a sub-table
                             px_query[[v$code]] <- sub_v
-                        } else if (length(name) < 3) {
+                        } else if (descend) {
                             # Non-total column, and we're not already a sub-table, add it as a sub-table
                             sub_query <- px_query
                             sub_query[[v$code]] <- sub_v
-                            add_registration(px_uri, meta, sub_query)
+                            add_registration(px_uri, meta, sub_query, descend = FALSE)
                         }
                     }
                 } else {
